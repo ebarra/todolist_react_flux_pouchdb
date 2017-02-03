@@ -1,0 +1,18 @@
+{
+  "name": "todo-list-pouchdb",
+  "version": "1.0.0",
+  "description": "Todo list app in PouchDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^15.4.2"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.22.0"
+  }
+}
