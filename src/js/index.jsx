@@ -1,11 +1,5 @@
-var App = React.createClass({
-    render: function () {
-        return (
-            <div>
-                {this.props.valor}
-            </div>
-        );
-    }
-});
+const App = require("./App.jsx");
+var React = require('react');
+var ReactDOM = require('react-dom');
 
-ReactDOM.render(<App valor="X" />, document.getElementById('milista'));
+ReactDOM.render(<App />, document.getElementById('milista'));
