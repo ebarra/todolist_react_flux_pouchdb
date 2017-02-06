@@ -7,3 +7,7 @@
   width: 100px;
   margin-left: 50px;
 }
+
+.pointer {
+  cursor: pointer;
+}

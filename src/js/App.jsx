@@ -11,6 +11,9 @@ var App = React.createClass({
     },
 
     addItem: function(e){
+      if(this._inputElement.value===""){
+        return;
+      }
       var itemArray = this.state.todos;
 
        itemArray.push(
@@ -39,15 +42,26 @@ var App = React.createClass({
       });
     },
 
+    removeItem: function(key){
+      var itemArray = this.state.todos;
+      itemArray = itemArray.filter(function(el){
+        return el.date !== key;
+      });
+      //para repintar todo
+      this.setState({
+        todos: itemArray
+      });
+    },
+
     renderList: function(complete) {
-        return <List manageClick={this.toggleItem} todos={this.state.todos.filter(function(x) { return x.isComplete === complete; })} />;
+        return <List manageClick={this.toggleItem} removeButton={this.removeItem} todos={this.state.todos.filter(function(x) { return x.isComplete === complete; })} />;
     },
 
     render: function() {
         return <div className="container">
             <form onSubmit={this.addItem}>
                 <input type="text" className="form-control kike" placeholder="Producto a comprar" ref={(a) => this._inputElement = a}></input>
-                <button className="btn-primary" type="submit">Añadir</button>
+                <button className="btn  btn-primary" type="submit">Añadir</button>
             </form>
             <div className="row">
                 <div className="col-md-6">

@@ -5,11 +5,11 @@ var Item = require("./item.jsx");
 var List = React.createClass({
     render: function() {
         var items = this.props.todos.map(function(todo) {
-            return <Item todo={todo} key={todo.date} myClick={this.props.manageClick}/>;
+            return <Item todo={todo} key={todo.date} removeFunction={this.props.removeButton} myClick={this.props.manageClick}/>;
         }, this);
-        return <ul className="list-group">
+        return <div className="list-group">
             {items}
-        </ul>;
+        </div>;
     }
 });
 
