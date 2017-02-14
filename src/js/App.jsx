@@ -6,15 +6,67 @@ var React = require("react"),
 var App = React.createClass({
     getInitialState: function() {
         return {
-            todos: []
+            list: []
         }
+    },
+
+    componentDidMount: function(){
+      this.props.localDB.changes({
+        since: "now",
+        live: true,
+        include_docs: true
+      }).on('change', this.handleLocalDBChange)
+        .on('complete', console.log.bind(console, '[Change:Complete]'))
+        .on('error', console.log.bind(console, '[Change:Error]'));
+
+        var self = this;
+        this.props.localDB.allDocs({include_docs: true, descending: true}, function(err, doc) {
+          //sacamos con un map solo los documentos, no _id, _rev, etc que viene en las rows
+          var onlydocs = doc.rows.map(function(x) {
+             return x.doc;
+          });
+          self.setState({
+            list: onlydocs
+          });
+        });
+    },
+
+    handleLocalDBChange: function(change){
+      console.log('handleLocalDBChange', change);
+
+      var doc = change.doc;
+      if (!doc) {
+        return;
+      }
+      /* //opción 1, si hay un cambio lo meto en el estado y hago setstate
+      if (doc._deleted) {
+        this.setState({
+          docs: this.state.list.filter(tmpdoc => tmpdoc._id !== doc._id)
+        });
+      } else {
+        this.setState({
+          list: this.state.list.concat(doc)
+        });
+      }
+      */
+      //opción 2, sea cual sea el cambio me traigo todo de la db
+      var self = this;
+      this.props.localDB.allDocs({include_docs: true, descending: true}, function(err, doc) {
+        var onlydocs = doc.rows.map(function(x) {
+           return x.doc;
+        });
+        self.setState({
+          list: onlydocs
+        });
+      });
     },
 
     addItem: function(e){
       if(this._inputElement.value===""){
         return;
       }
-      var itemArray = this.state.todos;
+      /*
+      var itemArray = this.state.list;
 
        itemArray.push(
          {
@@ -25,8 +77,20 @@ var App = React.createClass({
        );
 
        this.setState({
-         todos: itemArray
+         list: itemArray
        });
+       */
+       var item = {
+          _id: new Date().toISOString(),
+          name: this._inputElement.value,
+          isComplete: false,
+          date: Date.now()
+        };
+      this.props.localDB.put(item, function callback(err, result) {
+        if (!err) {
+          console.log('Successfully posted a item!');
+        }
+      });
 
        this._inputElement.value = "";
 
@@ -34,27 +98,27 @@ var App = React.createClass({
     },
 
     toggleItem: function(key){
-      var item = this.state.todos.find(function(x) { return x.date === key; });
+      var item = this.state.list.find(function(x) { return x.date === key; });
       item.isComplete = !item.isComplete;
       //para repintar todo
       this.setState({
-        todos: this.state.todos
+        list: this.state.list
       });
     },
 
     removeItem: function(key){
-      var itemArray = this.state.todos;
+      var itemArray = this.state.list;
       itemArray = itemArray.filter(function(el){
         return el.date !== key;
       });
       //para repintar todo
       this.setState({
-        todos: itemArray
+        list: itemArray
       });
     },
 
     renderList: function(complete) {
-        return <List manageClick={this.toggleItem} removeButton={this.removeItem} todos={this.state.todos.filter(function(x) { return x.isComplete === complete; })} />;
+        return <List manageClick={this.toggleItem} removeButton={this.removeItem} list={this.state.list.filter(function(x) { return x.isComplete === complete; })} />;
     },
 
     render: function() {
