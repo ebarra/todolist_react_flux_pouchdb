@@ -19,16 +19,20 @@ var App = React.createClass({
         .on('complete', console.log.bind(console, '[Change:Complete]'))
         .on('error', console.log.bind(console, '[Change:Error]'));
 
-        var self = this;
-        this.props.localDB.allDocs({include_docs: true, descending: true}, function(err, doc) {
-          //sacamos con un map solo los documentos, no _id, _rev, etc que viene en las rows
-          var onlydocs = doc.rows.map(function(x) {
-             return x.doc;
-          });
-          self.setState({
-            list: onlydocs
-          });
+        this.redrawUI();
+    },
+
+    redrawUI: function(){
+      var self = this;
+      this.props.localDB.allDocs({include_docs: true, descending: true}, function(err, doc) {
+        //sacamos con un map solo los documentos, no _id, _rev, etc que viene en las rows
+        var onlydocs = doc.rows.map(function(x) {
+           return x.doc;
         });
+        self.setState({
+          list: onlydocs
+        });
+      });
     },
 
     handleLocalDBChange: function(change){
@@ -50,15 +54,7 @@ var App = React.createClass({
       }
       */
       //opción 2, sea cual sea el cambio me traigo todo de la db
-      var self = this;
-      this.props.localDB.allDocs({include_docs: true, descending: true}, function(err, doc) {
-        var onlydocs = doc.rows.map(function(x) {
-           return x.doc;
-        });
-        self.setState({
-          list: onlydocs
-        });
-      });
+      this.redrawUI();
     },
 
     addItem: function(e){
@@ -100,21 +96,13 @@ var App = React.createClass({
     toggleItem: function(key){
       var item = this.state.list.find(function(x) { return x.date === key; });
       item.isComplete = !item.isComplete;
-      //para repintar todo
-      this.setState({
-        list: this.state.list
-      });
+      //para repintar todo guardamos en la bbdd, cuando se cambie llegará un evento change y se repinta solo
+      this.props.localDB.put(item);
     },
 
     removeItem: function(key){
-      var itemArray = this.state.list;
-      itemArray = itemArray.filter(function(el){
-        return el.date !== key;
-      });
-      //para repintar todo
-      this.setState({
-        list: itemArray
-      });
+      var item = this.state.list.find(function(x) { return x.date === key; });
+      this.props.localDB.remove(item);
     },
 
     renderList: function(complete) {
