@@ -1,9 +1,11 @@
 Añadir -d a browserify para que genere los sourcemaps
 
-
 https://www.codementor.io/reactjs/tutorial/react-js-flux-architecture-tutorial
 https://www.kirupa.com/react/simple_todo_app_react.htm
 https://scotch.io/tutorials/create-a-simple-to-do-app-with-react
+
+LIBRO O´reilly gratis. La guia definitiva: http://guide.couchdb.org/editions/1/es/index.html
+
 
 NOTAS:
 1.-
@@ -20,3 +22,7 @@ Siguiente opción es cuando me llega la notificación de que algo ha cambiado en
 
 3.-
 Otra historia es con getInitialState, que no es para sacar nada de la db, según react se debe hacer devolviendo un array vacio y luego en el componentDidMount se carga lo que sea. ver http://stackoverflow.com/questions/26615307/why-async-requests-should-be-made-in-componentdidmount-instead-of-getinitialstat
+
+IDEAS/MEJORAS:
+- Hay una cosa que se llama couchapp que sirve para hacer todo desde couchdb. Se podría hacer algo así.
+- 
